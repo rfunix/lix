@@ -30,6 +30,7 @@ defmodule Lix.MixProject do
       {:poison, "~> 3.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
+      {:mock, "~> 0.3.0", only: :test},
     ]
   end
 end

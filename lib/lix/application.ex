@@ -9,13 +9,11 @@ defmodule Lix.Application do
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: Lix.Worker.start_link(arg)
-      Supervisor.child_spec({Lix.Consumer, %{worker_name: :catalog, queue_name: "alo"}},
-        id: :catalog_consumer
-      ),
-      Supervisor.child_spec(
-        {Lix.Consumer, %{worker_name: :catalog_item, queue_name: "teste_item"}},
-        id: :catalog_item_consumer
-      )
+      {Lix.Consumer.Supervisor, []}
+      #Supervisor.child_spec(
+      #  {Lix.Consumer, %{worker_name: :catalog_item, queue_name: "test_item"}},
+      #  id: :catalog_item_consumer
+      #)
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
