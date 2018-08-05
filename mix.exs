@@ -15,7 +15,8 @@ defmodule Lix.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Lix.Application, []}
+      mod: {Lix.Application, []},
+      env: [handler_name: :handler_item],
     ]
   end
 
