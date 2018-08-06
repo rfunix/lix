@@ -8,8 +8,7 @@ defmodule Lix.Handler.Supervisor do
   @impl true
   def init(_args) do
     children = [
-      {Lix.Handler,
-       %{queue: "test_item", callback: "process_item", handler_module: Lix.Item.Handler}}
+      {Lix.Handler, %{}}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

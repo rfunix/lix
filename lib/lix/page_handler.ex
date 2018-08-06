@@ -1,8 +1,7 @@
-defmodule Lix.Item.Handler do
-  use GenServer
-
-  @name :handler_item
-  @handler_info %{handler_item: [queue: "test_item", callback: "process_item"]}
+defmodule Lix.Page.Handler do
+  use GenServer 
+  @name :handler_page
+  @handler_info %{handler_page: [queue: "test_page", callback: "process_page"]}
 
   def start_link(args) do
     GenServer.start_link(__MODULE__, args, name: @name)
@@ -17,7 +16,9 @@ defmodule Lix.Item.Handler do
     Lix.Handler.run(@name)
   end
 
-  def handle_call({:process_item, message}, _from, _state) do
+  def handle_call({:process_page, message}, _from, _state) do
     {:reply, message, message}
   end
+
+
 end
