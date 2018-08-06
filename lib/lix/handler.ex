@@ -13,7 +13,7 @@ defmodule Lix.Handler do
   end
 
   def register(handler) do
-   GenServer.cast(@name, {:register, handler})
+    GenServer.cast(@name, {:register, handler})
   end
 
   def run(handler_name) do
@@ -31,7 +31,10 @@ defmodule Lix.Handler do
   def handle_call({:execute, handler_name}, _from, registred_handlers) do
     handler = registred_handlers[handler_name]
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
-    resp = GenServer.call(handler_name, {String.to_atom(Keyword.get(handler, :callback)), message})
+
+    resp =
+      GenServer.call(handler_name, {String.to_atom(Keyword.get(handler, :callback)), message})
+
     {:reply, resp, registred_handlers}
   end
 end
