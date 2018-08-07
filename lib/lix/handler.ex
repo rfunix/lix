@@ -17,7 +17,23 @@ defmodule Lix.Handler do
   end
 
   def run(handler_name) do
-    GenServer.call(@name, {:execute, handler_name})
+    GenServer.cast(@name, {:execute, handler_name})
+  end
+
+  defp delete_message(handler, [%{receipt_handle: receipt_handle} | _]) do
+    queue = Keyword.get(handler, :queue)
+    IO.puts(inspect(Lix.Consumer.delete_message(queue, receipt_handle)))
+  end
+
+  defp call_handler_callback(handler_name, handler, message) do
+    case GenServer.call(
+           handler_name,
+           {String.to_atom(Keyword.get(handler, :callback)), message}
+         ) do
+      {:ok, message} ->
+        delete_message(handler, message)
+      _ -> {:error, message}
+    end
   end
 
   ## OTP callbacks
@@ -28,13 +44,14 @@ defmodule Lix.Handler do
   end
 
   @impl true
-  def handle_call({:execute, handler_name}, _from, registred_handlers) do
+  def handle_cast({:execute, handler_name}, registred_handlers) do
     handler = registred_handlers[handler_name]
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
-    resp =
-      GenServer.call(handler_name, {String.to_atom(Keyword.get(handler, :callback)), message})
+    if length(message) > 0 do
+      call_handler_callback(handler_name, handler, message)
+    end
 
-    {:reply, resp, registred_handlers}
+    {:noreply, registred_handlers}
   end
 end

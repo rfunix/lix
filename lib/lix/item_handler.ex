@@ -8,6 +8,7 @@ defmodule Lix.Item.Handler do
     GenServer.start_link(__MODULE__, args, name: @name)
   end
 
+  @impl true
   def init(args) do
     Lix.Handler.register(@handler_info)
     {:ok, args}
@@ -17,7 +18,9 @@ defmodule Lix.Item.Handler do
     Lix.Handler.run(@name)
   end
 
+  @impl true
   def handle_call({:process_item, message}, _from, _state) do
-    {:reply, message, message}
+    IO.puts("PROCESSANDO PORRA TODA")
+    {:reply, {:ok, message}, message}
   end
 end
