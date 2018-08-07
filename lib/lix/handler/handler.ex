@@ -3,6 +3,7 @@ defmodule Lix.Handler do
   use GenServer
 
   @name __MODULE__
+  @handler_process_time 1000
 
   def start_link(registred_handlers) do
     GenServer.start_link(__MODULE__, registred_handlers, name: @name)
@@ -21,6 +22,7 @@ defmodule Lix.Handler do
   def run(handler_name) do
     Logger.debug("Handler -> run: #{inspect(:handler_name)}")
     GenServer.cast(@name, {:execute, handler_name})
+    Process.sleep(@handler_process_time)
   end
 
   defp delete_message(handler, [%{receipt_handle: receipt_handle} | _]) do

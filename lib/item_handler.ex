@@ -16,13 +16,12 @@ defmodule Lix.Item.Handler do
 
   def handling() do
     Lix.Handler.run(@name)
-    Process.sleep(100)
     handling()
   end
 
   @impl true
   def handle_call({:process_item, message}, _from, _state) do
-    IO.puts("PROCESSANDO PORRA TODA")
+    # Do things
     {:reply, {:ok, message}, message}
   end
 end
