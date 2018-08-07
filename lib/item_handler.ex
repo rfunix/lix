@@ -16,6 +16,8 @@ defmodule Lix.Item.Handler do
 
   def handling() do
     Lix.Handler.run(@name)
+    Process.sleep(100)
+    handling()
   end
 
   @impl true

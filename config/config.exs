@@ -37,3 +37,9 @@ config :ex_aws, :sqs,
   host: "localhost",
   port: 4100,
   region: "local-01"
+
+config :logger,
+  backends: [:console],
+  compile_time_purge_matching: [
+    [level_lower_than: :debug]
+  ]

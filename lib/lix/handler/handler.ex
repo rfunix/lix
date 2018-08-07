@@ -1,4 +1,5 @@
 defmodule Lix.Handler do
+  require Logger
   use GenServer
 
   @name __MODULE__
@@ -13,19 +14,33 @@ defmodule Lix.Handler do
   end
 
   def register(handler) do
+    Logger.debug("Handler -> registered: #{inspect(handler)}")
     GenServer.cast(@name, {:register, handler})
   end
 
   def run(handler_name) do
+    Logger.debug("Handler -> run: #{inspect(:handler_name)}")
     GenServer.cast(@name, {:execute, handler_name})
   end
 
   defp delete_message(handler, [%{receipt_handle: receipt_handle} | _]) do
+    Logger.debug(
+      "Handler -> delete_message -> handler: #{inspect(:handler_name)}, receipt_handle: #{
+        receipt_handle
+      }"
+    )
+
     queue = Keyword.get(handler, :queue)
-    IO.puts(inspect(Lix.Consumer.delete_message(queue, receipt_handle)))
+    Lix.Consumer.delete_message(queue, receipt_handle)
   end
 
-  defp call_handler_callback(handler_name, handler, message) do
+  defp execute_handler_callback(handler_name, handler, message) do
+    Logger.debug(
+      "Handler -> execute_handler_callback: handler_name: #{inspect(:handler_name)} handler: #{
+        inspect(handler)
+      } message: #{inspect(message)}"
+    )
+
     case GenServer.call(
            handler_name,
            {String.to_atom(Keyword.get(handler, :callback)), message}
@@ -33,6 +48,7 @@ defmodule Lix.Handler do
       {:ok, message} ->
         delete_message(handler, message)
         {:ok, message}
+
       _ ->
         {:error, message}
     end
@@ -50,8 +66,12 @@ defmodule Lix.Handler do
     handler = registred_handlers[handler_name]
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
-    if length(message) > 0 do
-      call_handler_callback(handler_name, handler, message)
+    cond do
+      length(message) > 0 ->
+        execute_handler_callback(handler_name, handler, message)
+
+      true ->
+        Logger.debug("Handler queue: #{inspect(Keyword.get(handler, :queue))} is empty...")
     end
 
     {:noreply, registred_handlers}
