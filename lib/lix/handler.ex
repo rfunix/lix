@@ -32,7 +32,9 @@ defmodule Lix.Handler do
          ) do
       {:ok, message} ->
         delete_message(handler, message)
-      _ -> {:error, message}
+
+      _ ->
+        {:error, message}
     end
   end
 
