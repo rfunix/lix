@@ -1,6 +1,6 @@
-# Lix Handler
+# Lix [![CircleCI](https://circleci.com/gh/rfunix/lix/tree/master.svg?style=svg)](https://circleci.com/gh/rfunix/lix/tree/master)
 
-**TODO: Add description**
+## Lix is generic worker handler for SQS messages.
 
 ## Installation
 
