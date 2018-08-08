@@ -15,7 +15,7 @@ def deps do
 end
 ```
 
-## Add `:lix` in your applications
+## Add :lix in your applications
 ```elixir
 def application do
     [
