@@ -1,9 +1,14 @@
 defmodule ConsumerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import Mock
 
   @sqs_message %{body: %{messages: ["message test"]}}
+
+  setup do
+    consumer = start_supervised!(Lix.Consumer)
+    %{consumer: consumer}
+  end
 
   test "get_message" do
     with_mocks [

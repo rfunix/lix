@@ -10,7 +10,7 @@ defmodule Lix.Handler do
   end
 
   @impl true
-  def init(%{}) do
+  def init([]) do
     {:ok, %{}}
   end
 

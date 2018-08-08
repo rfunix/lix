@@ -7,15 +7,16 @@ defmodule Lix.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package(),
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
-      mod: {Lix.Application, []},
+      extra_applications: [:logger]
+      # mod: {Lix.Application, []},
     ]
   end
 
@@ -30,7 +31,15 @@ defmodule Lix.MixProject do
       {:poison, "~> 3.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
-      {:mock, "~> 0.3.0", only: :test},
+      {:mock, "~> 0.3.0", only: :test}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Rafael Francischini"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/rfunix/lix"}
     ]
   end
 end
