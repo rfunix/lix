@@ -8,11 +8,6 @@ defmodule HandlerTest do
   @sqs_message ["message test"]
   @receipt_handle [%{receipt_handle: "test_receipt_handle"}]
 
-  setup do
-    handler = start_supervised!(Lix.Handler)
-    %{handler: handler}
-  end
-
   test "register new handler" do
     Lix.Handler.register(@handler)
     assert {:ok, @handler} == Lix.Handler.get_registred_handlers()

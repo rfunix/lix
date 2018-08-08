@@ -5,11 +5,6 @@ defmodule ConsumerTest do
 
   @sqs_message %{body: %{messages: ["message test"]}}
 
-  setup do
-    consumer = start_supervised!(Lix.Consumer)
-    %{consumer: consumer}
-  end
-
   test "get_message" do
     with_mocks [
       {ExAws.SQS, [], [receive_message: fn _queue -> @sqs_message end]},

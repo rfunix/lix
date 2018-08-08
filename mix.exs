@@ -22,8 +22,8 @@ defmodule Lix.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
-      # mod: {Lix.Application, []},
+      extra_applications: [:logger],
+      mod: {Lix, []},
     ]
   end
 

@@ -1,4 +1,4 @@
-defmodule Lix.Application do
+defmodule Lix do
   @moduledoc false
 
   use Application
