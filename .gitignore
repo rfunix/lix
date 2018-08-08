@@ -26,3 +26,10 @@ lix-*.tar
 .DS_Store
 
 /config/
+
+/_build/ebin
+/deps/doc
+erl_crash.dump*.ez
+mix.lock/.idea
+*.iml
+/.elixir_ls
