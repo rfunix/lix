@@ -22,6 +22,7 @@ defmodule ConsumerTest do
       {ExAws, [], [request!: fn _message -> {:ok} end]}
     ]) do
       Lix.Consumer.delete_message("queue", "receipt_handle")
+      Process.sleep(1)
       assert called(ExAws.SQS.delete_message("queue", "receipt_handle"))
       assert called(ExAws.request!({:ok}))
     end

@@ -37,6 +37,11 @@ defmodule Lix.Handler do
     GenServer.cast(@name, {:delete_message, handler_name, message})
   end
 
+  def get_registred_handlers() do
+    Logger.debug("Handler -> get_registred_handlers") 
+    GenServer.call(@name, :get_registred_handlers)
+  end
+
   defp delete_message(handler, [%{receipt_handle: receipt_handle} | _]) do
     Logger.debug(
       "Handler -> delete_message -> handler: #{inspect(handler)}, receipt_handle: #{
@@ -92,4 +97,10 @@ defmodule Lix.Handler do
     delete_message(handler, message)
     {:noreply, registred_handlers}
   end
+
+  @impl true
+  def handle_call(:get_registred_handlers, _from, registred_handlers) do
+    {:reply, {:ok, registred_handlers}, registred_handlers}  
+  end
+
 end
