@@ -10,8 +10,18 @@ by adding `lix` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:lix, "~> 0.1.0"}
+    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.1.4"},
   ]
+end
+```
+
+# Add in your application
+```elixir
+def application do
+    [
+      extra_applications: [:logger],
+      applications: [:lix],
+    ]
 end
 ```
 
