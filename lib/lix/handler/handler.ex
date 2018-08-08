@@ -14,6 +14,8 @@ defmodule Lix.Handler do
     {:ok, %{}}
   end
 
+  # Handler API
+
   def register(handler) do
     Logger.debug("Handler -> registered: #{inspect(handler)}")
     GenServer.cast(@name, {:register, handler})
@@ -53,13 +55,15 @@ defmodule Lix.Handler do
       } message: #{inspect(message)}"
     )
 
+    callback = String.to_atom(Keyword.get(handler, :callback))
+
     GenServer.cast(
       handler_name,
-      {String.to_atom(Keyword.get(handler, :callback)), message}
+      {callback, message}
     )
   end
 
-  ## OTP callbacks
+  ## Handler OTP Callbacks
 
   @impl true
   def handle_cast({:register, handler}, registred_handlers) do
@@ -69,7 +73,6 @@ defmodule Lix.Handler do
   @impl true
   def handle_cast({:execute, handler_name}, registred_handlers) do
     handler = registred_handlers[handler_name]
-    IO.puts("Handler -> #{inspect(handler)}")
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
     cond do
@@ -86,7 +89,6 @@ defmodule Lix.Handler do
   @impl true
   def handle_cast({:delete_message, handler_name, message}, registred_handlers) do
     handler = registred_handlers[handler_name]
-    IO.puts("AAAA HANDLER -> #{inspect(handler)}")
     delete_message(handler, message)
     {:noreply, registred_handlers}
   end
