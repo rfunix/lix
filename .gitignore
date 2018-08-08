@@ -25,7 +25,7 @@ lix-*.tar
 *.swp
 .DS_Store
 
-/config/
+config/
 
 /_build/ebin
 /deps/doc
