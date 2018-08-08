@@ -23,7 +23,7 @@ defmodule Lix.Handler do
 
   def run(handler_name) do
     Logger.debug("Handler -> run: #{inspect(:handler_name)}")
-    GenServer.cast(@name, {:execute, handler_name})
+    GenServer.cast(@name, {:run, handler_name})
     Process.sleep(@handler_process_time)
   end
 
@@ -76,7 +76,7 @@ defmodule Lix.Handler do
   end
 
   @impl true
-  def handle_cast({:execute, handler_name}, registred_handlers) do
+  def handle_cast({:run, handler_name}, registred_handlers) do
     handler = registred_handlers[handler_name]
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
