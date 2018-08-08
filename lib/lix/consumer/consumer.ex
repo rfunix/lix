@@ -29,7 +29,7 @@ defmodule Lix.Consumer do
 
   def handle_call({:get_message, queue}, _from, _state) do
     messages =
-      ExAws.SQS.receive_message("#{queue}")
+      ExAws.SQS.receive_message(queue)
       |> ExAws.request!()
       |> parse_messages
 
@@ -37,7 +37,7 @@ defmodule Lix.Consumer do
   end
 
   def handle_cast({:delete_message, queue, receipt_handle}, state) do
-    ExAws.SQS.delete_message("#{queue}", receipt_handle)
+    ExAws.SQS.delete_message(queue, receipt_handle)
     |> ExAws.request!()
 
     {:noreply, state}
