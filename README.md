@@ -1,21 +1,41 @@
 # Lix [![CircleCI](https://circleci.com/gh/rfunix/lix/tree/master.svg?style=svg)](https://circleci.com/gh/rfunix/lix/tree/master)
 
-## Lix is generic worker handler for SQS messages.
+# Lix is generic worker handler for SQS messages.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `lix` to your list of dependencies in `mix.exs`:
+First, add Lix to your `mix.exs` dependencies:
 
 ```elixir
 def deps do
   [
-    {:lix, "~> 0.1.0"}
+    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.1.4"},
   ]
 end
 ```
 
-## Example
+and run `$ mix deps.get`. Add `:lix` to your applications list if your Elixir version is 1.3 or lower:
+
+```elixir
+def application do
+  [applications: [:lix]]
+end
+```
+
+Lix using [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handling SQS messages.
+We need to add some settings in our file `config.exs`, for example:
+
+```elixir
+config :ex_aws, :sqs,
+  access_key_id: "",
+  secret_access_key: "",
+  scheme: "http://",
+  host: "localhost",
+  port: 4100,
+  region: "local-01"
+```
+
+## Usage
 
 ```elixir
 defmodule Example.Item.Handler do
