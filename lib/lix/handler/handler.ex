@@ -22,7 +22,7 @@ defmodule Lix.Handler do
   end
 
   def run(handler_name) do
-    Logger.debug("Handler -> run: #{inspect(:handler_name)}")
+    Logger.debug("Handler -> run: #{inspect(handler_name)}")
     GenServer.cast(@name, {:run, handler_name})
     Process.sleep(@handler_process_time)
   end
