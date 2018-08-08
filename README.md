@@ -25,6 +25,19 @@ def application do
 end
 ```
 
+## Lix using [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handling SQS messages.
+## We need to add some settings in our file `config.exs`, for example:
+
+```elixir
+config :ex_aws, :sqs,
+  access_key_id: "",
+  secret_access_key: "",
+  scheme: "http://",
+  host: "localhost",
+  port: 4100,
+  region: "local-01"
+```
+
 ## Example
 
 ```elixir
