@@ -8,7 +8,6 @@ defmodule Lix.Application do
       {Lix.Consumer.Supervisor, []},
       {Lix.Handler.Supervisor, []},
       {Lix.Item.Handler, []},
-      {Lix.Page.Handler, []},
     ]
 
     opts = [strategy: :one_for_one, name: Lix.Supervisor]

@@ -20,8 +20,9 @@ defmodule Lix.Item.Handler do
   end
 
   @impl true
-  def handle_call({:process_item, message}, _from, _state) do
+  def handle_cast({:process_item, message}, _state) do
     # Do things
-    {:reply, {:ok, message}, message}
+    Lix.Handler.confirm_processed_callback(@name, message)
+    {:noreply, message}
   end
 end

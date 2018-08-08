@@ -25,9 +25,19 @@ defmodule Lix.Handler do
     Process.sleep(@handler_process_time)
   end
 
+  def confirm_processed_callback(handler_name, message) do
+    Logger.debug(
+      "Handler confirm_processed_callback -> handler: #{inspect(handler_name)}, message: #{
+        inspect(message)
+      }"
+    )
+
+    GenServer.cast(@name, {:delete_message, handler_name, message})
+  end
+
   defp delete_message(handler, [%{receipt_handle: receipt_handle} | _]) do
     Logger.debug(
-      "Handler -> delete_message -> handler: #{inspect(:handler_name)}, receipt_handle: #{
+      "Handler -> delete_message -> handler: #{inspect(handler)}, receipt_handle: #{
         receipt_handle
       }"
     )
@@ -43,17 +53,10 @@ defmodule Lix.Handler do
       } message: #{inspect(message)}"
     )
 
-    case GenServer.call(
-           handler_name,
-           {String.to_atom(Keyword.get(handler, :callback)), message}
-         ) do
-      {:ok, message} ->
-        delete_message(handler, message)
-        {:ok, message}
-
-      _ ->
-        {:error, message}
-    end
+    GenServer.cast(
+      handler_name,
+      {String.to_atom(Keyword.get(handler, :callback)), message}
+    )
   end
 
   ## OTP callbacks
@@ -66,6 +69,7 @@ defmodule Lix.Handler do
   @impl true
   def handle_cast({:execute, handler_name}, registred_handlers) do
     handler = registred_handlers[handler_name]
+    IO.puts("Handler -> #{inspect(handler)}")
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
     cond do
@@ -76,6 +80,14 @@ defmodule Lix.Handler do
         Logger.debug("Handler queue: #{inspect(Keyword.get(handler, :queue))} is empty...")
     end
 
+    {:noreply, registred_handlers}
+  end
+
+  @impl true
+  def handle_cast({:delete_message, handler_name, message}, registred_handlers) do
+    handler = registred_handlers[handler_name]
+    IO.puts("AAAA HANDLER -> #{inspect(handler)}")
+    delete_message(handler, message)
     {:noreply, registred_handlers}
   end
 end
