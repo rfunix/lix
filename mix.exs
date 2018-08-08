@@ -1,6 +1,12 @@
 defmodule Lix.MixProject do
   use Mix.Project
 
+  defp description do
+    """
+    Library to create is generic handler workers for SQS messages.
+    """
+  end
+
   def project do
     [
       app: :lix,
@@ -9,6 +15,7 @@ defmodule Lix.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
+      description: description()
     ]
   end
 
