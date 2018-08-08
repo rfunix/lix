@@ -3,7 +3,7 @@ defmodule Lix.Consumer do
 
   @name __MODULE__
 
-  ## Cli
+  ## Consumer API
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, {}, name: @name)
@@ -25,11 +25,11 @@ defmodule Lix.Consumer do
     messages
   end
 
-  ## OTP callbacks
+  ## Consumer OTP callbacks
 
   def handle_call({:get_message, queue}, _from, _state) do
     messages =
-      ExAws.SQS.receive_message("queue/#{queue}")
+      ExAws.SQS.receive_message("#{queue}")
       |> ExAws.request!()
       |> parse_messages
 
@@ -37,7 +37,7 @@ defmodule Lix.Consumer do
   end
 
   def handle_cast({:delete_message, queue, receipt_handle}, state) do
-    ExAws.SQS.delete_message("queue/#{queue}", receipt_handle)
+    ExAws.SQS.delete_message("#{queue}", receipt_handle)
     |> ExAws.request!()
 
     {:noreply, state}
