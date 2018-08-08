@@ -45,8 +45,7 @@ defmodule Lix.MixProject do
   defp package do
     [
       maintainers: ["Rafael Francischini"],
-      files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
-                        license* CHANGELOG* changelog* src),
+      files: ~w(lib .formatter.exs mix.exs README*),
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/rfunix/lix"}
     ]
