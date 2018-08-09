@@ -3,7 +3,7 @@ defmodule Lix.MixProject do
 
   defp description do
     """
-    Library to create is generic handler workers for SQS messages.
+    Library to create generic handler workers for SQS messages.
     """
   end
 
