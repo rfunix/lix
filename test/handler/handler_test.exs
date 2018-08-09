@@ -26,12 +26,14 @@ defmodule HandlerTest do
 
   test "confirm processed callback " do
     with_mocks([
-      {Lix.Consumer, [], [delete_message: fn _queue, _receipt_handle -> {:ok} end]}
+      {ExAws.SQS, [], [delete_message: fn _queue, _receipt_handle -> {:ok} end]},
+      {ExAws, [], [request!: fn _message -> {:ok} end]}
     ]) do
       Lix.Handler.register(@handler)
       Lix.Handler.confirm_processed_callback(@handler_name, @receipt_handle)
       Process.sleep(1)
-      assert called(Lix.Consumer.delete_message("queue/test_handler", "test_receipt_handle"))
+      assert called(ExAws.SQS.delete_message("queue/test_handler", "test_receipt_handle"))
+      assert called(ExAws.request!({:ok}))
     end
   end
 end
