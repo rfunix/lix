@@ -21,11 +21,9 @@ defmodule HandlerHelpersTest do
   end
 
   test "execute handler callback" do
-    with_mocks(
-      [
-        {GenServer, [], [cast: fn _handler_name, {_callback, _message} -> {:ok} end]}
-      ]
-    )  do
+    with_mocks([
+      {GenServer, [], [cast: fn _handler_name, {_callback, _message} -> {:ok} end]}
+    ]) do
       callback = String.to_atom(Keyword.get(@handler.handler_test, :callback))
       execute_handler_callback(@handler_name, @handler.handler_test, @sqs_message)
       assert called(GenServer.cast(@handler_name, {callback, @sqs_message}))

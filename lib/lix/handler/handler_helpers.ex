@@ -20,6 +20,7 @@ defmodule Lix.Handler.Helpers do
     )
 
     callback = String.to_atom(Keyword.get(handler, :callback))
+
     GenServer.cast(
       handler_name,
       {callback, message}

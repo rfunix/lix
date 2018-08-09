@@ -6,7 +6,7 @@ defmodule Lix do
   def start(_type, _args) do
     children = [
       {Lix.Consumer.Supervisor, []},
-      {Lix.Handler.Supervisor, []},
+      {Lix.Handler.Supervisor, []}
     ]
 
     opts = [strategy: :one_for_one, name: Lix.Supervisor]
