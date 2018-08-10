@@ -8,6 +8,7 @@ defmodule Lix.Handler.Supervisor do
   @impl true
   def init(_args) do
     children = [
+      {Lix.Handler.Manager, %{}},
       {Lix.Handler, %{}}
     ]
 

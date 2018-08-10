@@ -55,7 +55,7 @@ defmodule Example.Item.Handler do
 
   @impl true
   def init(args) do
-    Lix.Handler.register(@handler_info)
+    Lix.Handler.Manager.register(@handler_info)
     {:ok, args}
   end
 

@@ -9,18 +9,21 @@ defmodule Lix.Handler do
 
   # Handler API
 
-  def start_link(registred_handlers) do
-    GenServer.start_link(__MODULE__, registred_handlers, name: @name)
-  end
-
-  def register(handler) do
-    Logger.debug("Handler -> registered: #{inspect(handler)}")
-    GenServer.cast(@name, {:register, handler})
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: @name)
   end
 
   def run(handler_name) do
     Logger.debug("Handler -> run: #{inspect(handler_name)}")
-    GenServer.cast(@name, {:run, handler_name})
+
+    case Lix.Handler.Manager.get_handler_by_name(handler_name) do
+      {:ok, handler} ->
+        GenServer.cast(@name, {:run, handler, handler_name})
+
+      {:error, error_message} ->
+        Logger.debug(error_message)
+    end
+
     Process.sleep(@handler_process_time)
   end
 
@@ -34,11 +37,6 @@ defmodule Lix.Handler do
     GenServer.cast(@name, {:delete_message, handler_name, message})
   end
 
-  def get_registred_handlers() do
-    Logger.debug("Handler -> get_registred_handlers")
-    GenServer.call(@name, :get_registred_handlers)
-  end
-
   ## Handler OTP Callbacks
 
   @impl true
@@ -47,13 +45,7 @@ defmodule Lix.Handler do
   end
 
   @impl true
-  def handle_cast({:register, handler}, registred_handlers) do
-    {:noreply, Map.merge(registred_handlers, handler)}
-  end
-
-  @impl true
-  def handle_cast({:run, handler_name}, registred_handlers) do
-    handler = registred_handlers[handler_name]
+  def handle_cast({:run, handler, handler_name}, state) do
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
     cond do
@@ -64,18 +56,19 @@ defmodule Lix.Handler do
         Logger.debug("Handler queue: #{inspect(Keyword.get(handler, :queue))} is empty...")
     end
 
-    {:noreply, registred_handlers}
+    {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:delete_message, handler_name, message}, registred_handlers) do
-    handler = registred_handlers[handler_name]
-    delete_message(handler, message)
-    {:noreply, registred_handlers}
-  end
+  def handle_cast({:delete_message, handler_name, message}, state) do
+    case Lix.Handler.Manager.get_handler_by_name(handler_name) do
+      {:ok, handler} ->
+        delete_message(handler, message)
 
-  @impl true
-  def handle_call(:get_registred_handlers, _from, registred_handlers) do
-    {:reply, {:ok, registred_handlers}, registred_handlers}
+      {:error, error_message} ->
+        Logger.debug(error_message)
+    end
+
+    {:noreply, state}
   end
 end
