@@ -48,15 +48,22 @@ defmodule Example.Item.Handler do
     GenServer.start_link(__MODULE__, args, name: @name)
   end
 
-  def handling() do
-    Lix.Handler.run(@name)
-    handling()
-  end
-
   @impl true
   def init(args) do
     Lix.Handler.Manager.register(@handler_info)
+    schedule_poller()
     {:ok, args}
+  end
+
+  defp schedule_poller() do
+    send(self(), :poll)
+  end
+
+  @impl true
+  def handle_info(:poll, state) do
+    Lix.Handler.run(@name)
+    schedule_poller()
+    {:noreply, state}
   end
 
   @impl true
@@ -66,7 +73,6 @@ defmodule Example.Item.Handler do
     {:noreply, message}
   end
 end
-
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
