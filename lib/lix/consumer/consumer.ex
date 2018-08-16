@@ -1,4 +1,7 @@
 defmodule Lix.Consumer do
+  @moduledoc """
+    Lix.Consumer, OTP Server for get and delete SQS messages.
+  """
   use GenServer
 
   @name __MODULE__
