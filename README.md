@@ -14,7 +14,7 @@ def deps do
 end
 ```
 
-and run `$ mix deps.get`. Add `:lix` to your applications list if your Elixir version is 1.3 or lower:
+and run `$ mix deps.get`. Add `:lix` to your applications list:
 
 ```elixir
 def application do
