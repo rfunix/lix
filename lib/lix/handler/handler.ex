@@ -5,7 +5,8 @@ defmodule Lix.Handler do
   use GenServer
 
   @name __MODULE__
-  @handler_process_time 500
+
+  defp handler_backoff, do: Application.fetch_env!(:lix, :handler_backoff)
 
   # Handler API
 
@@ -24,7 +25,8 @@ defmodule Lix.Handler do
         Logger.debug(error_message)
     end
 
-    Process.sleep(@handler_process_time)
+    handler_backoff()
+    |> Process.sleep()
   end
 
   def confirm_processed_callback(handler_name, message) do
