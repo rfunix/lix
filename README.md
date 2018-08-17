@@ -118,6 +118,8 @@ defmodule Example.Handler do
     {:noreply, state}
   end
 end
+
+Example.Handler.Supervisor.start_link([])
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
