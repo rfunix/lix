@@ -3,6 +3,12 @@ defmodule Lix.Consumer do
 
   @name __MODULE__
 
+  defp parse_messages(%{body: %{messages: messages}}), do: messages
+
+  defp max_number_of_messages, do: Application.fetch_env!(:lix, :max_number_of_messages)
+
+  defp visibility_timeout, do: Application.fetch_env!(:lix, :visibility_timeout)
+
   ## Consumer API
 
   def start_link(_args) do
@@ -19,18 +25,6 @@ defmodule Lix.Consumer do
 
   def delete_message(queue_url, receipt_handle) do
     GenServer.cast(@name, {:delete_message, queue_url, receipt_handle})
-  end
-
-  defp parse_messages(%{body: %{messages: messages}}) do
-    messages
-  end
-
-  defp max_number_of_messages do
-    Application.fetch_env!(:lix, :max_number_of_messages)
-  end
-
-  defp visibility_timeout do
-    Application.fetch_env!(:lix, :visibility_timeout)
   end
 
   ## Consumer OTP callbacks
