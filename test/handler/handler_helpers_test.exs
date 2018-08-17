@@ -5,7 +5,7 @@ defmodule HandlerHelpersTest do
 
   @handler_name :handler_test
   @handler %{handler_test: [queue: "queue/test_handler", callback: "process_test"]}
-  @receipt_handle [%{receipt_handle: "test_receipt_handle"}]
+  @receipt_handle %{receipt_handle: "test_receipt_handle"}
   @sqs_message %{body: %{messages: ["message test"]}}
 
   test "delete message" do

@@ -7,11 +7,11 @@ defmodule ConsumerTest do
 
   test "get_message" do
     with_mocks [
-      {ExAws.SQS, [], [receive_message: fn _queue -> @sqs_message end]},
+      {ExAws.SQS, [], [receive_message: fn _queue, _opts -> @sqs_message end]},
       {ExAws, [], [request!: fn _message -> @sqs_message end]}
     ] do
       assert ["message test"] == Lix.Consumer.get_message("queue")
-      assert called(ExAws.SQS.receive_message("queue"))
+      assert called(ExAws.SQS.receive_message("queue", [max_number_of_messages: 2, visibility_timeout: 0.30]))
       assert called(ExAws.request!(@sqs_message))
     end
   end
