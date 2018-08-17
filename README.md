@@ -9,7 +9,7 @@ First, add Lix to your `mix.exs` dependencies:
 ```elixir
 def deps do
   [
-    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.1.8"},
+    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.1.9"},
   ]
 end
 ```
@@ -39,7 +39,8 @@ Lix has specific settings as well, for example:
 ```elixir
 config :lix,
   max_number_of_messages: 10,
-  visibility_timeout: 0.30
+  visibility_timeout: 0.30,
+  handler_backoff: 500
 ```
 
 ## Usage
