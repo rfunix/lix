@@ -35,24 +35,66 @@ config :ex_aws, :sqs,
   region: "local-01"
 ```
 
+Lix has specific settings as well, for example:
+```elixir
+config :lix,
+  max_number_of_messages: 10,
+  visibility_timeout: 0.30
+```
+
 ## Usage
 
 ```elixir
-defmodule Example.Item.Handler do
+defmodule Example.Handler.Supervisor do
+  use Supervisor
+
+  def start_link(arg) do
+    Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_arg) do
+    children = [
+      Supervisor.child_spec({Example.Handler, %{name: :handler01, queue: "test_item"}},
+        id: :handler01
+      ),
+      Supervisor.child_spec({Example.Handler, %{name: :handler02, queue: "test_item"}},
+        id: :handler02
+      ),
+      Supervisor.child_spec({Example.Handler, %{name: :handler03, queue: "test_item"}},
+        id: :handler03
+      ),
+      Supervisor.child_spec({Example.Handler, %{name: :handler04, queue: "test_item"}},
+        id: :handler04
+      ),
+      Supervisor.child_spec({Example.Handler, %{name: :handler05, queue: "test_item"}},
+        id: :handler05
+      )
+    ]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+end
+
+defmodule Example.Handler do
   use GenServer
+  require Logger
 
-  @name :handler_item
-  @handler_info %{handler_item: [queue: "queue/test_item", callback: "process_item"]}
-
-  def start_link(args) do
-    GenServer.start_link(__MODULE__, args, name: @name)
+  def start_link(%{name: name} = args) do
+    GenServer.start_link(__MODULE__, args, name: name)
   end
 
   @impl true
   def init(args) do
-    Lix.Handler.Manager.register(@handler_info)
+    generate_handler_info(args)
+    |> Lix.Handler.Manager.register()
+
     schedule_poller()
     {:ok, args}
+  end
+
+  defp generate_handler_info(%{name: name, queue: queue}) do
+    AtomicMap.convert(%{name => [queue: "queue/#{queue}", callback: "process_item"]})
   end
 
   defp schedule_poller() do
@@ -60,17 +102,20 @@ defmodule Example.Item.Handler do
   end
 
   @impl true
-  def handle_info(:poll, state) do
-    Lix.Handler.run(@name)
+  def handle_info(:poll, %{name: name} = state) do
+    Lix.Handler.run(name)
     schedule_poller()
     {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:process_item, message}, _state) do
+  def handle_cast({:process_item, messages}, %{name: name} = state) do
     # Do things
-    Lix.Handler.confirm_processed_callback(@name, message)
-    {:noreply, message}
+    Enum.map(messages, fn message ->
+      Lix.Handler.confirm_processed_callback(name, message)
+    end)
+
+    {:noreply, state}
   end
 end
 ```
