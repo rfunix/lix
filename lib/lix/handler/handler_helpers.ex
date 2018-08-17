@@ -1,7 +1,7 @@
 defmodule Lix.Handler.Helpers do
   require Logger
 
-  def delete_message(handler, [%{receipt_handle: receipt_handle} | _]) do
+  def delete_message(handler, %{receipt_handle: receipt_handle}) do
     Logger.debug(
       "Handler -> delete_message -> handler: #{inspect(handler)}, receipt_handle: #{
         receipt_handle

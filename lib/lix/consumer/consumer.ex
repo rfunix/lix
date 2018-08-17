@@ -25,11 +25,22 @@ defmodule Lix.Consumer do
     messages
   end
 
+  defp max_number_of_messages do
+    Application.fetch_env!(:lix, :max_number_of_messages)
+  end
+
+  defp visibility_timeout do
+    Application.fetch_env!(:lix, :visibility_timeout)
+  end
+
   ## Consumer OTP callbacks
 
   def handle_call({:get_message, queue}, _from, _state) do
     messages =
-      ExAws.SQS.receive_message(queue)
+      ExAws.SQS.receive_message(queue,
+        max_number_of_messages: max_number_of_messages(),
+        visibility_timeout: visibility_timeout()
+      )
       |> ExAws.request!()
       |> parse_messages
 
