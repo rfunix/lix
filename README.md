@@ -49,29 +49,18 @@ config :lix,
 defmodule Example.Handler.Supervisor do
   use Supervisor
 
+  @number_of_workers 1..5
+
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
   @impl true
   def init(_arg) do
-    children = [
-      Supervisor.child_spec({Example.Handler, %{name: :handler01, queue: "test_item"}},
-        id: :handler01
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler02, queue: "test_item"}},
-        id: :handler02
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler03, queue: "test_item"}},
-        id: :handler03
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler04, queue: "test_item"}},
-        id: :handler04
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler05, queue: "test_item"}},
-        id: :handler05
-      )
-    ]
+    children = Enum.map(@number_of_workers, fn x -> 
+      name = String.to_atom("handler#{x}")
+      Supervisor.child_spec({Example.Handler, %{name: name, queue: "test_item"}}, id: name)
+    end)
 
     Supervisor.init(children, strategy: :one_for_one)
   end
