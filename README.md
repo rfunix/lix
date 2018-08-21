@@ -92,7 +92,7 @@ end
 
 ## Workers Example
 
-```
+```elixir
 
 defmodule Example.Handler.Supervisor do
   use Supervisor
