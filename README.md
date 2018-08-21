@@ -57,8 +57,8 @@ defmodule Example.Handler.Supervisor do
 
   @impl true
   def init(_arg) do
-    children = Enum.map(@number_of_workers, fn x -> 
-      name = String.to_atom("handler#{x}")
+    children = Enum.map(@number_of_workers, fn worker_number -> 
+      name = String.to_atom("handler#{worker_number}")
       Supervisor.child_spec({Example.Handler, %{name: name, queue: "test_item"}}, id: name)
     end)
 
