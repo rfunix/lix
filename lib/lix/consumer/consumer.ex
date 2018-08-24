@@ -15,8 +15,8 @@ defmodule Lix.Consumer do
     GenServer.start_link(__MODULE__, {}, name: @name)
   end
 
-  def init(_args) do
-    {:ok, {}}
+  def init(args) do
+    {:ok, args}
   end
 
   def get_message(queue) do
