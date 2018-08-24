@@ -43,11 +43,61 @@ config :lix,
   handler_backoff: 500
 ```
 
-## Usage
+## Basic Worker Example
 
 ```elixir
+
+defmodule Basic.Handler.Example do
+  use GenServer
+
+  @name :handler_example
+
+  def start_link(args) do
+    GenServer.start_link(__MODULE__, args, name: @name)
+  end
+
+  @impl true
+  def init(args) do
+    Lix.Handler.Manager.register(%{
+      handler_example: [queue: "queue/handler_queue", callback: "process_item"]
+    })
+
+    schedule_poller()
+    {:ok, args}
+  end
+
+  defp schedule_poller() do
+    send(self(), :poll)
+  end
+
+  @impl true
+  def handle_info(:poll, state) do
+    Lix.Handler.run(@name)
+    schedule_poller()
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:process_item, messages}, state) do
+    # Do things
+    Enum.map(messages, fn message ->
+      Lix.Handler.confirm_processed_callback(@name, message)
+    end)
+
+    {:noreply, state}
+  end
+end
+
+```
+
+## Workers Example
+
+```elixir
+
 defmodule Example.Handler.Supervisor do
   use Supervisor
+
+  @number_of_workers 1..5
 
   def start_link(arg) do
     Supervisor.start_link(__MODULE__, arg, name: __MODULE__)
@@ -55,23 +105,10 @@ defmodule Example.Handler.Supervisor do
 
   @impl true
   def init(_arg) do
-    children = [
-      Supervisor.child_spec({Example.Handler, %{name: :handler01, queue: "test_item"}},
-        id: :handler01
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler02, queue: "test_item"}},
-        id: :handler02
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler03, queue: "test_item"}},
-        id: :handler03
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler04, queue: "test_item"}},
-        id: :handler04
-      ),
-      Supervisor.child_spec({Example.Handler, %{name: :handler05, queue: "test_item"}},
-        id: :handler05
-      )
-    ]
+    children = Enum.map(@number_of_workers, fn worker_number -> 
+      name = String.to_atom("handler#{worker_number}")
+      Supervisor.child_spec({Example.Handler, %{name: name, queue: "test_item"}}, id: name)
+    end)
 
     Supervisor.init(children, strategy: :one_for_one)
   end
