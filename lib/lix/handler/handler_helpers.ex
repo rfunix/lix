@@ -12,6 +12,15 @@ defmodule Lix.Handler.Helpers do
     Lix.Consumer.delete_message(queue, receipt_handle)
   end
 
+  def publish_message(handler, message) do
+    Logger.debug(
+      "Handler -> publish_message -> handler: #{inspect(handler)}, message: #{message}"
+    )
+
+    Keyword.get(handler, :topic_arn)
+    |> Lix.Producer.send_message(message)
+  end
+
   def execute_handler_callback(handler_name, handler, message) do
     Logger.debug(
       "Handler -> execute_handler_callback: handler_name: #{inspect(:handler_name)} handler: #{

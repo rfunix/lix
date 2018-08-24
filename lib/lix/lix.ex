@@ -6,6 +6,7 @@ defmodule Lix do
   def start(_type, _args) do
     children = [
       {Lix.Consumer.Supervisor, []},
+      {Lix.Producer.Supervisor, []},
       {Lix.Handler.Supervisor, []}
     ]
 

@@ -17,8 +17,7 @@ defmodule Lix.Handler do
   def run(handler_name) do
     Logger.debug("Handler -> run: #{inspect(handler_name)}")
 
-    case Lix.Handler.Manager.get_handler_by_name(handler_name) do
-      {:ok, handler} ->
+    case Lix.Handler.Manager.get_handler_by_name(handler_name) do {:ok, handler} ->
         GenServer.cast(@name, {:run, handler, handler_name})
 
       {:error, error_message} ->
@@ -37,6 +36,17 @@ defmodule Lix.Handler do
     )
 
     GenServer.cast(@name, {:delete_message, handler_name, message})
+  end
+
+  def confirm_processed_callback(handler_name, message, publish_message) do
+    Logger.debug(
+      "Handler confirm_processed_callback -> handler: #{inspect(handler_name)}, message: #{
+        inspect(message)
+      }, publish_message: #{inspect(publish_message)}"
+    )
+
+    GenServer.cast(@name, {:delete_message, handler_name, message})
+    GenServer.cast(@name, {:publish_message, handler_name, publish_message})
   end
 
   ## Handler OTP Callbacks
@@ -71,6 +81,18 @@ defmodule Lix.Handler do
         Logger.debug(error_message)
     end
 
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:publish_message, handler_name, message}, state) do
+     case Lix.Handler.Manager.get_handler_by_name(handler_name) do
+      {:ok, handler} ->
+        publish_message(handler, message)
+
+      {:error, error_message} ->
+        Logger.debug(error_message)
+    end
     {:noreply, state}
   end
 end
