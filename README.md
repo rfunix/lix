@@ -9,7 +9,7 @@ First, add Lix to your `mix.exs` dependencies:
 ```elixir
 def deps do
   [
-    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.1.9"},
+    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.2.0"},
   ]
 end
 ```
