@@ -22,11 +22,20 @@ def application do
 end
 ```
 
-Lix using [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handling SQS messages.
+Lix using [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handling SQS messages and [ex_aws_sns](https://github.com/ex-aws/ex_aws_sns) to publish handler messages.
+
 We need to add some settings in our file `config.exs`, for example:
 
 ```elixir
 config :ex_aws, :sqs,
+  access_key_id: "",
+  secret_access_key: "",
+  scheme: "http://",
+  host: "localhost",
+  port: 4100,
+  region: "local-01"
+  
+config :ex_aws, :sns,
   access_key_id: "",
   secret_access_key: "",
   scheme: "http://",
@@ -88,6 +97,51 @@ defmodule Basic.Handler.Example do
   end
 end
 
+```
+
+## Basic Worker Example with publish sns messages
+
+```
+defmodule Basic.Handler.Example do
+  use GenServer
+
+  @name :handler_example
+
+  def start_link(args) do
+    GenServer.start_link(__MODULE__, args, name: @name)
+  end
+
+  @impl true
+  def init(args) do
+    Lix.Handler.Manager.register(%{
+      handler_example: [queue: "queue/handler_queue", callback: "process_item", topic_arn: "my-topic"]
+    })
+
+    schedule_poller()
+    {:ok, args}
+  end
+
+  defp schedule_poller() do
+    send(self(), :poll)
+  end
+
+  @impl true
+  def handle_info(:poll, state) do
+    Lix.Handler.run(@name)
+    schedule_poller()
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:process_item, messages}, state) do
+    # Do things
+    Enum.map(messages, fn message ->
+      Lix.Handler.confirm_processed_callback(@name, message, "PUBLISH THIS MESSAGE")
+    end)
+
+    {:noreply, state}
+  end
+end
 ```
 
 ## Workers Example
