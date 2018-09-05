@@ -1,10 +1,10 @@
 # Lix [![CircleCI](https://circleci.com/gh/rfunix/lix/tree/master.svg?style=svg)](https://circleci.com/gh/rfunix/lix/tree/master)
 
-# Lix is generic worker handler for SQS messages.
+# Lix is a generic worker handler for SQS messages.
 
 ## Installation
 
-First, add Lix to your `mix.exs` dependencies:
+1. Add Lix to your dependencies in the `mix.exs` file:
 
 ```elixir
 def deps do
@@ -14,7 +14,9 @@ def deps do
 end
 ```
 
-and run `$ mix deps.get`. Add `:lix` to your applications list:
+2. Run `$ mix deps.get` to update your dependencies.
+
+3. Add `:lix` to your applications list:
 
 ```elixir
 def application do
@@ -22,9 +24,11 @@ def application do
 end
 ```
 
-Lix using [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handling SQS messages and [ex_aws_sns](https://github.com/ex-aws/ex_aws_sns) to publish handler messages.
+## Configuration
 
-We need to add some settings in our file `config.exs`, for example:
+Lix uses [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handle SQS messages and [ex_aws_sns](https://github.com/ex-aws/ex_aws_sns) to publish messages.
+
+For this to work, we need to add a few AWS settings in our file `config.exs`. For example:
 
 ```elixir
 config :ex_aws, :sqs,
@@ -44,7 +48,7 @@ config :ex_aws, :sns,
   region: "local-01"
 ```
 
-Lix has specific settings as well, for example:
+You can also define some Lix specific settings. For example:
 ```elixir
 config :lix,
   max_number_of_messages: 10,
@@ -52,7 +56,9 @@ config :lix,
   handler_backoff: 500
 ```
 
-## Basic Worker Example
+## Examples
+
+### Basic Worker
 
 ```elixir
 
@@ -99,7 +105,7 @@ end
 
 ```
 
-## Basic Worker Example with publish sns messages
+### Basic Worker that publishes SNS messages
 
 ```elixir
 defmodule Basic.Handler.Example do
@@ -144,7 +150,7 @@ defmodule Basic.Handler.Example do
 end
 ```
 
-## Workers Example
+### Workers
 
 ```elixir
 
@@ -214,7 +220,7 @@ end
 Example.Handler.Supervisor.start_link([])
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
+The documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/lix](https://hexdocs.pm/lix).
 
