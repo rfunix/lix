@@ -101,7 +101,7 @@ end
 
 ## Basic Worker Example with publish sns messages
 
-```
+```elixir
 defmodule Basic.Handler.Example do
   use GenServer
 
