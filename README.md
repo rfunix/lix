@@ -1,20 +1,22 @@
 # Lix [![CircleCI](https://circleci.com/gh/rfunix/lix/tree/master.svg?style=svg)](https://circleci.com/gh/rfunix/lix/tree/master)
 
-# Lix is generic worker handler for SQS messages.
+# Lix is a generic worker handler for SQS messages.
 
 ## Installation
 
-First, add Lix to your `mix.exs` dependencies:
+1. Add Lix to your dependencies in the `mix.exs` file:
 
 ```elixir
 def deps do
   [
-    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.1.9"},
+    {:lix, git: "https://github.com/rfunix/lix/", tag: "0.2.0"},
   ]
 end
 ```
 
-and run `$ mix deps.get`. Add `:lix` to your applications list:
+2. Run `$ mix deps.get` to update your dependencies.
+
+3. Add `:lix` to your applications list:
 
 ```elixir
 def application do
@@ -22,8 +24,11 @@ def application do
 end
 ```
 
-Lix using [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handling SQS messages.
-We need to add some settings in our file `config.exs`, for example:
+## Configuration
+
+Lix uses [ex_aws_sqs](https://github.com/ex-aws/ex_aws_sqs) to handle SQS messages and [ex_aws_sns](https://github.com/ex-aws/ex_aws_sns) to publish messages.
+
+For this to work, we need to add a few AWS settings in our file `config.exs`. For example:
 
 ```elixir
 config :ex_aws, :sqs,
@@ -33,9 +38,17 @@ config :ex_aws, :sqs,
   host: "localhost",
   port: 4100,
   region: "local-01"
+  
+config :ex_aws, :sns,
+  access_key_id: "",
+  secret_access_key: "",
+  scheme: "http://",
+  host: "localhost",
+  port: 4100,
+  region: "local-01"
 ```
 
-Lix has specific settings as well, for example:
+You can also define some Lix specific settings. For example:
 ```elixir
 config :lix,
   max_number_of_messages: 10,
@@ -43,7 +56,9 @@ config :lix,
   handler_backoff: 500
 ```
 
-## Basic Worker Example
+## Examples
+
+### Basic Worker
 
 ```elixir
 
@@ -90,7 +105,52 @@ end
 
 ```
 
-## Workers Example
+### Basic Worker that publishes SNS messages
+
+```elixir
+defmodule Basic.Handler.Example do
+  use GenServer
+
+  @name :handler_example
+
+  def start_link(args) do
+    GenServer.start_link(__MODULE__, args, name: @name)
+  end
+
+  @impl true
+  def init(args) do
+    Lix.Handler.Manager.register(%{
+      handler_example: [queue: "queue/handler_queue", callback: "process_item", topic_arn: "my-topic"]
+    })
+
+    schedule_poller()
+    {:ok, args}
+  end
+
+  defp schedule_poller() do
+    send(self(), :poll)
+  end
+
+  @impl true
+  def handle_info(:poll, state) do
+    Lix.Handler.run(@name)
+    schedule_poller()
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:process_item, messages}, state) do
+    # Do things
+    Enum.map(messages, fn message ->
+      Lix.Handler.confirm_processed_callback(@name, message, "PUBLISH THIS MESSAGE")
+    end)
+
+    {:noreply, state}
+  end
+end
+```
+
+### Workers
 
 ```elixir
 
@@ -160,7 +220,7 @@ end
 Example.Handler.Supervisor.start_link([])
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
+The documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/lix](https://hexdocs.pm/lix).
 
