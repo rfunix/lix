@@ -16,11 +16,11 @@ end
 
 2. Run `$ mix deps.get` to update your dependencies.
 
-3. Add `:lix` to your applications list:
+3. Add `:lix` to your extra applications list:
 
 ```elixir
 def application do
-  [applications: [:lix]]
+  [extra_applications: [:lix]]
 end
 ```
 
