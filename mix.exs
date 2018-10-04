@@ -15,7 +15,9 @@ defmodule Lix.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      description: description()
+      description: description(),
+      name: "lix",
+      source_url: "https://github.com/rfunix/lix"
     ]
   end
 
