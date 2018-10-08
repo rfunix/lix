@@ -24,7 +24,7 @@ defmodule Lix.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :sentry],
       mod: {Lix, []}
     ]
   end
@@ -43,6 +43,7 @@ defmodule Lix.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:mock, "~> 0.3.0", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:sentry, "~> 6.4"}
     ]
   end
 
