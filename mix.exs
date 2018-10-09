@@ -44,6 +44,7 @@ defmodule Lix.MixProject do
       {:mock, "~> 0.3.0", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:sentry, "~> 7.0"},
+      {:new_relic_agent, "~> 1.0"},
     ]
   end
 

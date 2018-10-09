@@ -48,6 +48,13 @@ config :ex_aws, :sns,
   region: "local-01"
 ```
 
+For Newrelic add your app_name and license_key as the example below:
+```elixir
+config :new_relic_agent,
+  app_name: "My App",
+  license_key: "license_key"
+```
+
 You can also define some Lix specific settings. For example:
 ```elixir
 config :lix,
