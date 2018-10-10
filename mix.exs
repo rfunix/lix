@@ -38,12 +38,13 @@ defmodule Lix.MixProject do
       {:ex_aws, "~> 2.0"},
       {:ex_aws_sqs, "~> 2.0"},
       {:ex_aws_sns, "~> 2.0"},
-      {:poison, "~> 3.0"},
+      {:jason, "~> 1.1"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
       {:mock, "~> 0.3.0", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
-      {:sentry, "~> 6.4"}
+      {:sentry, "~> 7.0"},
+      {:new_relic_agent, "~> 1.0"},
     ]
   end
 

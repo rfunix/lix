@@ -3,6 +3,7 @@ defmodule Lix.Handler do
   import Lix.Handler.Helpers
 
   use GenServer
+  use NewRelic.Tracer
 
   @name __MODULE__
 
@@ -57,6 +58,7 @@ defmodule Lix.Handler do
   end
 
   @impl true
+  @trace :handle_cast
   def handle_cast({:run, handler, handler_name}, state) do
     message = Lix.Consumer.get_message(Keyword.get(handler, :queue))
 
@@ -72,6 +74,7 @@ defmodule Lix.Handler do
   end
 
   @impl true
+  @trace :handle_cast
   def handle_cast({:delete_message, handler_name, message}, state) do
     case Lix.Handler.Manager.get_handler_by_name(handler_name) do
       {:ok, handler} ->
@@ -85,6 +88,7 @@ defmodule Lix.Handler do
   end
 
   @impl true
+  @trace :handle_cast
   def handle_cast({:publish_message, handler_name, message}, state) do
      case Lix.Handler.Manager.get_handler_by_name(handler_name) do
       {:ok, handler} ->
