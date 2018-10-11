@@ -12,7 +12,7 @@ defmodule Lix do
 
     opts = [strategy: :one_for_one, name: Lix.Supervisor]
 
-    #{:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
+    {:ok, _} = Logger.add_backend(Sentry.LoggerBackend)
 
     Supervisor.start_link(children, opts)
   end
