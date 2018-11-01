@@ -1,5 +1,7 @@
 defmodule Lix do
-  @moduledoc false
+  @moduledoc """
+  Lix is an OTP Library for creating generic SQS worker handlers
+  """
 
   use Application
 
